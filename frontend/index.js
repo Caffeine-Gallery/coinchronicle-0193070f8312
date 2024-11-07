@@ -32,7 +32,7 @@ function formatDate(timestamp) {
 }
 
 async function updatePriceHistory() {
-    const prices = await backend.getPrices();
+    const prices = await backend.getLastMonthPrices();
     
     // Update table
     const tableBody = document.getElementById('priceTable');
@@ -57,7 +57,7 @@ async function updatePriceHistory() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Bitcoin Price (USD)',
+                label: 'Bitcoin Price (Last 30 Days)',
                 data: data,
                 borderColor: '#0d6efd',
                 tension: 0.1

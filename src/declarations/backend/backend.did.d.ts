@@ -5,6 +5,7 @@ import type { IDL } from '@dfinity/candid';
 export interface PriceData { 'timestamp' : bigint, 'price' : number }
 export interface _SERVICE {
   'addPrice' : ActorMethod<[number], undefined>,
+  'getLastMonthPrices' : ActorMethod<[], Array<PriceData>>,
   'getLatestPrice' : ActorMethod<[], [] | [PriceData]>,
   'getPrices' : ActorMethod<[], Array<PriceData>>,
 }

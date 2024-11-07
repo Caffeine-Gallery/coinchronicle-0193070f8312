@@ -5,6 +5,7 @@ type PriceData =
  };
 service : {
   addPrice: (float64) -> ();
+  getLastMonthPrices: () -> (vec PriceData) query;
   getLatestPrice: () -> (opt PriceData) query;
   getPrices: () -> (vec PriceData) query;
 }

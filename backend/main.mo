@@ -7,17 +7,14 @@ import Debug "mo:base/Debug";
 import Int "mo:base/Int";
 
 actor {
-    // Define the price record type
     public type PriceData = {
         price: Float;
         timestamp: Int;
     };
 
-    // Store prices in a stable variable
     private stable var priceHistory : [PriceData] = [];
     private let buffer = Buffer.Buffer<PriceData>(0);
 
-    // Initialize buffer with stable data
     private func initBuffer() {
         for (price in priceHistory.vals()) {
             buffer.add(price);
@@ -25,7 +22,6 @@ actor {
     };
     initBuffer();
 
-    // Add a new price
     public func addPrice(price: Float) : async () {
         let newPrice : PriceData = {
             price = price;
@@ -34,12 +30,24 @@ actor {
         buffer.add(newPrice);
     };
 
-    // Get all prices
     public query func getPrices() : async [PriceData] {
         return Buffer.toArray(buffer);
     };
 
-    // Get latest price
+    public query func getLastMonthPrices() : async [PriceData] {
+        let now = Time.now();
+        let oneMonthNanos = 30 * 24 * 60 * 60 * 1_000_000_000;
+        let monthAgo = now - oneMonthNanos;
+        
+        let filtered = Buffer.Buffer<PriceData>(0);
+        for (price in buffer.vals()) {
+            if (price.timestamp >= monthAgo) {
+                filtered.add(price);
+            };
+        };
+        return Buffer.toArray(filtered);
+    };
+
     public query func getLatestPrice() : async ?PriceData {
         let size = buffer.size();
         if (size == 0) {
@@ -48,7 +56,6 @@ actor {
         ?buffer.get(size - 1);
     };
 
-    // System functions for upgrades
     system func preupgrade() {
         priceHistory := Buffer.toArray(buffer);
     };
